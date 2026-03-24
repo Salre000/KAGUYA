@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class FriendScene : SceneBase
 {
+    protected string textFileName = "FriendsUpText";
+
 
     public override void Interference(Status status)
     {
-        status.HP -= HPDecrease;
-
-        status.goodFriends += 2000;//AddStatus+(int)(AddStatus*((status.goodFriendsRate+100)/100f));
+        status.goodFriends += 2000;
 
         StatusManager.instance.SetStatus(status);
 
@@ -20,6 +20,12 @@ public class FriendScene : SceneBase
         base.Start();
 
         Debug.Log("フレンドシーンを開始");
+
+
+
+        TextLoadManager.instance.Load(textFileName,0,()=> { TextManager.instance.TextStart(); });
+        
+
 
     }
 

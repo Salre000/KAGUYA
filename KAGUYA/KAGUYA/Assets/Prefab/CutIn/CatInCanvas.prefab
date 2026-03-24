@@ -1101,7 +1101,7 @@ MonoBehaviour:
   X: 1
   Y: 0
   Z: 0
-  XSpeed: 5.5
+  XSpeed: 30
   YSpeed: 1
   ZSpeed: 1
 --- !u!1 &6898977754382468390

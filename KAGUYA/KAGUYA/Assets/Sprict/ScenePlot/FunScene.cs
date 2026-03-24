@@ -7,9 +7,7 @@ public class FunScene : SceneBase
 
     public override void Interference(Status status)
     {
-        status.HP -= HPDecrease;
 
-        status.fun += AddStatus + (int)(AddStatus * ((status.funRate + 100) / 100f));
 
         StatusManager.instance.SetStatus(status);
 

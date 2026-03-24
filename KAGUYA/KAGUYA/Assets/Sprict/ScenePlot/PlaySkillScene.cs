@@ -7,9 +7,6 @@ public class PlaySkillScene : SceneBase
 
     public override void Interference(Status status)
     {
-        status.HP -= HPDecrease;
-
-        status.playSkill += AddStatus + (int)(AddStatus * ((status.playSkillRate + 100) / 100f));
 
         StatusManager.instance.SetStatus(status);
 

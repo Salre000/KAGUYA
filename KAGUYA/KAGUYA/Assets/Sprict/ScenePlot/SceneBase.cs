@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,9 +6,10 @@ using UnityEngine;
 // シーンのベース
 public class SceneBase
 {
+
+
     public virtual void Start() 
     {
-
     }
 
     public virtual void Update() { }
@@ -24,6 +26,6 @@ public class SceneBase
     }
     public virtual void Interference(Status status) { }
 
-    protected readonly int HPDecrease = 8;
-    protected readonly int AddStatus = 20;
+
+
 }

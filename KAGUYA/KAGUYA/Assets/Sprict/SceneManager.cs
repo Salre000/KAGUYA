@@ -36,6 +36,9 @@ public class SceneManager : MonoBehaviour
 
     public void SetScene(SceneBase sceneBase) {nowScene = sceneBase;}
 
+    public void SceneEnd() { nowScene.End(); }
+
+
     public void AddPlotCount() {}
 
 
