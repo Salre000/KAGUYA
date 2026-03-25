@@ -9,7 +9,8 @@ public class FriendScene : SceneBase
 
     public override void Interference(Status status)
     {
-        status.goodFriends += 2000;
+        status.goodFriends += 1;
+        status.HP -= 1;
 
         StatusManager.instance.SetStatus(status);
 

@@ -85,7 +85,12 @@ public class TextLoadManager : MonoBehaviour
 
         return textList[ID].text;
     }
-    public string GetName(int ID) { return textList[ID].name; }
+    public string GetName(int ID)
+    {
+        if (textList.Count <= ID) return string.Empty;
+
+        return textList[ID].name;
+    }
 
 
 

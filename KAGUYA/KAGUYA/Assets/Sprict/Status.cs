@@ -48,7 +48,7 @@ public class Status
         funRate = BASE_RATE;
 
         // HP‚Ì‰Šú’l‚ğİ’è
-        HP=BASE_MAX_HP= MAX_HP;
+        HP= MAX_HP= BASE_MAX_HP;
     }
 
     public Status Cope() { return (Status)this.MemberwiseClone(); }

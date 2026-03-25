@@ -8,7 +8,7 @@ public class FanLetterScene : SceneBase
     {
         base.Start();
 
-        Debug.Log("ファンレターシーンを開始");
+        CatinManager.instance.StartNormalCutin();
 
     }
 

@@ -6,6 +6,7 @@ using TMPro;
 public class TextManager : MonoBehaviour
 {
     public static TextManager instance;
+    [Header("テキストを描画する場所のオブジェクト"),SerializeField] GameObject textBox;
     [SerializeField] TextMeshProUGUI nameText;
     [SerializeField] TextMeshProUGUI TextText;
     [SerializeField] string textData;
@@ -26,6 +27,8 @@ public class TextManager : MonoBehaviour
     public void Awake()
     {
         instance = this;
+        textBox.SetActive(false);
+
     }
 
     public void Update()
@@ -46,6 +49,9 @@ public class TextManager : MonoBehaviour
     {
         textFlag = true;
         textData = TextLoadManager.instance.GetText(plotCount);
+        nameText.text = TextLoadManager.instance.GetName(plotCount);
+
+        textBox.SetActive(true);
     }
 
     private void ChangeText() 
@@ -77,7 +83,9 @@ public class TextManager : MonoBehaviour
 
             textData = TextLoadManager.instance.GetText(plotCount);
 
-            if(textData==string.Empty)End();
+            nameText.text = TextLoadManager.instance.GetName(plotCount);
+
+            if (textData==string.Empty)End();
 
 
         }
@@ -108,6 +116,8 @@ public class TextManager : MonoBehaviour
         plotCount = 0;
 
         SceneManager.instance.SceneEnd();
+
+        textBox.SetActive(false);
 
     }
 
