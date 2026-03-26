@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static SceneCanvasManager;
 
 public class FanLetterScene : SceneBase
 {
@@ -8,7 +9,11 @@ public class FanLetterScene : SceneBase
     {
         base.Start();
 
-        CatinManager.instance.StartNormalCutin();
+        CatinManager.instance.StartNormalCutin(() =>
+        {
+
+            SceneCanvasManager.instance.StartSceneCanvas((int)plotSceneEnum.FunLetter);
+        });
 
     }
 
@@ -22,9 +27,19 @@ public class FanLetterScene : SceneBase
         }
 
     }
+    /// <summary>
+    ///  ‚±‚ÌŠÖ”‚ÍŠî’êƒNƒ‰ƒX‚Ì•¨‚ğg‚í‚È‚¢
+    /// </summary>
     public override void End()
     {
-        base.End();
+        PlotManager.instance.AddPlotCount();
+
+        CatinManager.instance.StartNormalCutin(() =>
+        {
+            PlotManager.instance.StartPlotScene();
+            SceneCanvasManager.instance.SceneEnd();
+        });
+
 
 
         SceneManager.instance.SetScene(null);

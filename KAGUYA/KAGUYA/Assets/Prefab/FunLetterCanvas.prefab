@@ -868,6 +868,7 @@ GameObject:
   - component: {fileID: 4851637576783523609}
   - component: {fileID: 3067531505383364289}
   - component: {fileID: 3697577608414935274}
+  - component: {fileID: 2689255946411981157}
   m_Layer: 5
   m_Name: FunLetterCanvas
   m_TagString: Untagged
@@ -959,6 +960,21 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &2689255946411981157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6193128867986840475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de27871ac86f6947b8899eb2da49969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneImage: {fileID: 0}
+  buttons: []
+  selectButton: {fileID: 6309376643041698033}
 --- !u!1 &6601510055728085214
 GameObject:
   m_ObjectHideFlags: 0

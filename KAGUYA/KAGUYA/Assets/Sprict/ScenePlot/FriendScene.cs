@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static SceneCanvasManager;
 
 public class FriendScene : SceneBase
 {
@@ -23,9 +24,14 @@ public class FriendScene : SceneBase
         Debug.Log("フレンドシーンを開始");
 
 
+        CatinManager.instance.StartNormalCutin(() =>
+        {
+            TextLoadManager.instance.Load(textFileName, 0, () => { TextManager.instance.TextStart(); });
 
-        TextLoadManager.instance.Load(textFileName,0,()=> { TextManager.instance.TextStart(); });
-        
+        });
+
+
+
 
 
     }
@@ -34,7 +40,7 @@ public class FriendScene : SceneBase
     {
         base.Update();
 
-        if(Input.GetKeyDown(KeyCode.O)) StatusManager.instance.StatusInterference(Interference);
+        if (Input.GetKeyDown(KeyCode.O)) StatusManager.instance.StatusInterference(Interference);
 
 
 

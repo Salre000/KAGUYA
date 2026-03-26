@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static SceneCanvasManager;
 
 public class OrderScene : SceneBase
 {
@@ -12,26 +13,35 @@ public class OrderScene : SceneBase
 
         Debug.Log("通販シーンを開始");
 
+        CatinManager.instance.StartNormalCutin(() =>
+        {
+
+            SceneCanvasManager.instance.StartSceneCanvas((int)plotSceneEnum.Order);
+        });
+
+
     }
 
     public override void Update()
     {
         base.Update();
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            End();
-        }
-
     }
     public override void End()
     {
-        base.End();
+        PlotManager.instance.AddPlotCount();
+
+        CatinManager.instance.StartNormalCutin(() =>
+        {
+            PlotManager.instance.StartPlotScene();
+            SceneCanvasManager.instance.SceneEnd();
+        });
+
+
 
         SceneManager.instance.SetScene(null);
 
         Debug.Log("終了");
-
     }
 
 

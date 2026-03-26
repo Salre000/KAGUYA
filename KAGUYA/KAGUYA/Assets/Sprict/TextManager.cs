@@ -119,6 +119,8 @@ public class TextManager : MonoBehaviour
 
         textBox.SetActive(false);
 
+        TextLoadManager.instance.Lost();
+
     }
 
 }
