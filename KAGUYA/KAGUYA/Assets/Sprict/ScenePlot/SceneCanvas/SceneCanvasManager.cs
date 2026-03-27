@@ -14,7 +14,6 @@ public class SceneCanvasManager : MonoBehaviour
     public enum plotSceneEnum
     {
         None,
-        HelloWorld,
         Fried,
         PlaySkill,
         Fan,

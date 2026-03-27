@@ -54,7 +54,7 @@ public class MoveObject : MonoBehaviour
 
         reverseYSpeed += Math.Abs(YSpeed);
 
-        if (reverseXSpeed < reverseYCount) return;
+        if (reverseYSpeed < reverseYCount) return;
         YSpeed *= -1;
 
         reverseYSpeed = 0;

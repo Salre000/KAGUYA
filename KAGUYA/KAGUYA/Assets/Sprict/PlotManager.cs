@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +21,9 @@ public class PlotManager : MonoBehaviour
     private List<List<int>> plotDecided=new List<List<int>>();
 
     // プロットのデータの参照先
-    private readonly string FILE_NAME = "Plot"; 
+    private readonly string FILE_NAME = "Plot";
+
+    [SerializeField] TextMeshProUGUI TestText;
 
     public void Awake()
     {
@@ -73,7 +76,7 @@ public class PlotManager : MonoBehaviour
 
             case 7:
                 //合戦の予定
-                scene =null;
+                scene = new KassenScene();
                 break;
 
 
@@ -87,7 +90,7 @@ public class PlotManager : MonoBehaviour
 
     public int GetPlotCount() { return plotCount; }
 
-    public void AddPlotCount() { plotCount++; }
+    public void AddPlotCount() { plotCount++; TestText.text = plotCount.ToString(); }
 
     public void StartPlotScene() 
     {

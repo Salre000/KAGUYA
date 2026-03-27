@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BattleManager : MonoBehaviour
@@ -18,6 +19,7 @@ public class BattleManager : MonoBehaviour
 
 
     List<BattleCard> battleCards = new List<BattleCard>();
+    List<int> handCards = new List<int>();
 
     List<List<string>> battleCardTextData = new List<List<string>>();
 
@@ -25,12 +27,15 @@ public class BattleManager : MonoBehaviour
     int YCPower = 0;
     int kaguyaPower = 0;
 
+    private System.Action<int,int> SetBattlePower = null;
 
 
     [SerializeField] SpriteScriptableObject battleImages;
     public void Awake()
     {
         instance = this;
+
+        handCards = new List<int> { 0, 1, 2 };
     }
 
     public void Start()
@@ -38,6 +43,8 @@ public class BattleManager : MonoBehaviour
 
         battleCardTextData = TextLoad.Load("BattleCard");
 
+        SetBattleCard(9);
+        SetBattleCard(1);
         SetBattleCard(10);
 
     }
@@ -48,12 +55,12 @@ public class BattleManager : MonoBehaviour
         Debug.Log("TEST:YC:" + YCPower);
         Debug.Log("TEST:KAGUYA:" + kaguyaPower);
 
-        if (Input.GetKeyDown(KeyCode.E)) 
+        if (Input.GetKeyDown(KeyCode.E))
         {
 
-            for(int i=0;i< battleCards.Count; i++) 
+            for (int i = 0; i < battleCards.Count; i++)
             {
-                for(int j=0;j< battleCards[i].extra.Count; j++) 
+                for (int j = 0; j < battleCards[i].extra.Count; j++)
                 {
                     battleCards[i].extra[j]();
                 }
@@ -63,6 +70,48 @@ public class BattleManager : MonoBehaviour
             }
 
         }
+    }
+
+    public void SetSetBattlePower(System.Action<int, int> action) 
+    {
+        SetBattlePower=action;
+    }
+
+    public void Attack(int value) 
+    {
+        // まだ中身がない
+
+        Debug.Log("攻撃力"+value);
+    }
+
+    public void SetCardAction(int index) 
+    {
+
+        index = handCards[index];
+
+        // Hpの消費が可能かどうかを判断
+        if (battleCards[index].cost > StatusManager.instance.GetStatus().HP) return;
+
+
+        StatusManager.instance.StatusInterference(status =>
+        {
+
+            status.HP -= battleCards[index].cost;
+
+            StatusManager.instance.SetStatus(status);
+
+        });
+
+
+        Attack(battleCards[index].attack);
+
+
+        for (int i=0;i< battleCards[index].extra.Count; i++)  
+        {
+            battleCards[index].extra[i]();
+        }
+
+
     }
 
 
@@ -92,14 +141,14 @@ public class BattleManager : MonoBehaviour
         battleCards[index].attack = int.Parse(battleCardTextData[battleCards[index].id][CARD_ATTACK_RATE]);
         battleCards[index].attack += int.Parse(battleCardTextData[battleCards[index].id][CARD_ATTACK_ENHANCED_RATE]);
 
-       //要らないかも
+        //要らないかも
         //battleCards[index].extra.Clear();
 
         SetExtra(index, battleCardTextData[battleCards[index].id][CARD_EXTRA_RATE]);
         SetExtra(index, battleCardTextData[battleCards[index].id][CARD_EXTRA_ENHANCED_RATE]);
     }
 
-    private void SetExtra(int index,string extraText)
+    private void SetExtra(int index, string extraText)
     {
         for (int i = 0; i < extraText.Length; i++)
         {
@@ -109,7 +158,7 @@ public class BattleManager : MonoBehaviour
             //　コマンドの文字が来ないとコンテニュー
             if (!CheckExtraTextCommand(extraText[i])) continue;
 
-            int power = GetExtraValue(i,index, extraText); ;
+            int power = GetExtraValue(i, index, extraText); ;
 
             switch (extraText[i])
             {
@@ -121,7 +170,7 @@ public class BattleManager : MonoBehaviour
                         AddIroha(power);
                     });
 
-                break;
+                    break;
                 case 'Y':
 
                     battleCards[index].extra.Add(() =>
@@ -129,7 +178,7 @@ public class BattleManager : MonoBehaviour
                         AddYC(power);
                     });
 
-                break;
+                    break;
                 case 'K':
 
                     battleCards[index].extra.Add(() =>
@@ -137,7 +186,7 @@ public class BattleManager : MonoBehaviour
                         AddKaguya(power);
                     });
 
-                break;
+                    break;
                 case 'C':
 
                     battleCards[index].extra.Add(() =>
@@ -145,7 +194,18 @@ public class BattleManager : MonoBehaviour
                         Debug.Log("攻撃力" + power + "の攻撃");
                     });
 
-                break;
+                    break;
+
+                case 'R':
+
+                    System.Action action = battleCards[index].extra[battleCards[index].extra.Count-1];
+
+                    for (int j = 0; j < power; j++)
+                    {
+                        battleCards[index].extra.Add(() => { action();});
+                    }
+
+                    break;
 
             }
 
@@ -170,6 +230,7 @@ public class BattleManager : MonoBehaviour
         if (c == 'K') return true;
         if (c == 'C') return true;
         if (c == 'N') return true;
+        if (c == 'R') return true;
 
         return false;
     }
@@ -186,7 +247,7 @@ public class BattleManager : MonoBehaviour
         return false;
     }
 
-    private int GetExtraValue(int i,int index,string extraText) 
+    private int GetExtraValue(int i, int index, string extraText)
     {
 
         int power = -1;
@@ -293,6 +354,7 @@ public class BattleManager : MonoBehaviour
         kaguyaPower += add;
 
     }
+
 
 
     class BattleCard
