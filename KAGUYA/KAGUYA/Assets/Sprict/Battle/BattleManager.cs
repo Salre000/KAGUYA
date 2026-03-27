@@ -29,6 +29,9 @@ public class BattleManager : MonoBehaviour
 
     private System.Action<int,int> SetBattlePower = null;
 
+    private int turn = 0;
+    private int kassenMaxTurn = 12;
+
 
     [SerializeField] SpriteScriptableObject battleImages;
     public void Awake()
@@ -43,7 +46,7 @@ public class BattleManager : MonoBehaviour
 
         battleCardTextData = TextLoad.Load("BattleCard");
 
-        SetBattleCard(9);
+        SetBattleCard(5);
         SetBattleCard(1);
         SetBattleCard(10);
 
@@ -71,6 +74,9 @@ public class BattleManager : MonoBehaviour
 
         }
     }
+    public int GetTurn() { return turn; }
+    public int GetRemainingTurn() { return kassenMaxTurn-turn; }
+    public void AddTurn() {  turn++; }
 
     public void SetSetBattlePower(System.Action<int, int> action) 
     {
@@ -79,7 +85,22 @@ public class BattleManager : MonoBehaviour
 
     public void Attack(int value) 
     {
+
+        SetBattlePower(value, 0);
+
+
+        Debug.Log("UŒ‚—Í"+value);
+    }
+
+    public void LeewayUp(int value) 
+    {
         // ‚Ü‚¾’†g‚ª‚È‚¢
+
+        Status status=@StatusManager.instance.GetStatus();
+
+        status.LEEWAY_HP += value;
+
+        StatusManager.instance.SetStatus(status);
 
         Debug.Log("UŒ‚—Í"+value);
     }
@@ -91,6 +112,8 @@ public class BattleManager : MonoBehaviour
 
         // Hp‚ÌÁ”ï‚ª‰Â”\‚©‚Ç‚¤‚©‚ð”»’f
         if (battleCards[index].cost > StatusManager.instance.GetStatus().HP) return;
+
+        BattleManager.instance.AddTurn();
 
 
         StatusManager.instance.StatusInterference(status =>
@@ -191,6 +214,7 @@ public class BattleManager : MonoBehaviour
 
                     battleCards[index].extra.Add(() =>
                     {
+                        Attack(power);
                         Debug.Log("UŒ‚—Í" + power + "‚ÌUŒ‚");
                     });
 
@@ -204,6 +228,15 @@ public class BattleManager : MonoBehaviour
                     {
                         battleCards[index].extra.Add(() => { action();});
                     }
+
+                    break;
+                case 'L':
+
+
+                    battleCards[index].extra.Add(() =>
+                    {
+                        LeewayUp(power);
+                    });
 
                     break;
 
@@ -231,6 +264,7 @@ public class BattleManager : MonoBehaviour
         if (c == 'C') return true;
         if (c == 'N') return true;
         if (c == 'R') return true;
+        if (c == 'L') return true;
 
         return false;
     }

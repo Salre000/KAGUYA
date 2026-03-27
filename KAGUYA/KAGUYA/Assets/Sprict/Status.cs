@@ -37,6 +37,8 @@ public class Status
     public int HP = 0;
     // HP Å‘å‘Ì—Í
     public int MAX_HP = 0;
+    // —]—T
+    public int LEEWAY_HP = 0;
 
     public Status()
     {

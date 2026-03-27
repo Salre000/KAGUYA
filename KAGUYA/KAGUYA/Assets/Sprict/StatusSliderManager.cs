@@ -12,6 +12,9 @@ public class StatusSliderManager : MonoBehaviour
     [SerializeField] StatusSlider FU;
     [SerializeField] RectTransform HPVar;
     [SerializeField] TextMeshProUGUI hpText;
+    [SerializeField] RectTransform LeewayVar;
+    [SerializeField] TextMeshProUGUI LeewayText;
+
     public void Awake()
     {
         instance = this;
@@ -23,6 +26,7 @@ public class StatusSliderManager : MonoBehaviour
         ChangePS();
         ChangeFU();
         ChangeHP();
+        ChangeLeeway();
     }
 
     private void ChangeFR()
@@ -55,6 +59,24 @@ public class StatusSliderManager : MonoBehaviour
         hpPos.x = -300 * (1-HPrate);
 
         HPVar.localPosition = hpPos;
+
+    }
+    private void ChangeLeeway()
+    {
+        Status status = StatusManager.instance.GetDummyStatus();
+
+        Vector3 leewayPos = LeewayVar.localPosition;
+
+        float LeewayRate = (float)status.LEEWAY_HP / (float)status.MAX_HP;
+
+        if (LeewayRate > 1) LeewayRate = 1;
+
+        LeewayText.text = status.LEEWAY_HP.ToString();
+
+
+        leewayPos.x = 300*(1-LeewayRate);
+
+        LeewayVar.localPosition = leewayPos;
 
     }
 

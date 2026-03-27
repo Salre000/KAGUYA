@@ -68,6 +68,7 @@ public class StatusManager : MonoBehaviour
         if (status.funRate != dummyStatus.funRate) return true;
 
         if (status.HP != dummyStatus.HP) return true;
+        if (status.LEEWAY_HP != dummyStatus.LEEWAY_HP) return true;
         if (status.fuju != dummyStatus.fuju) return true;
 
         return false;
@@ -84,6 +85,8 @@ public class StatusManager : MonoBehaviour
         if (status.fun > dummyStatus.fun) dummyStatus.fun++;
         if (status.HP > dummyStatus.HP) dummyStatus.HP++;
         else if (status.HP < dummyStatus.HP) dummyStatus.HP--;
+        if (status.LEEWAY_HP > dummyStatus.LEEWAY_HP) dummyStatus.LEEWAY_HP++;
+        else if (status.LEEWAY_HP < dummyStatus.LEEWAY_HP) dummyStatus.LEEWAY_HP--;
 
 
         StatusSliderManager.instance.ChangeStatusUI();

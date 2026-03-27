@@ -31,6 +31,7 @@ public class KASSEBSceneCanvas : SceneCanvas
     private int nowEnemiValueText = 0;
     private float nowValue = 0;
 
+    [SerializeField] private TextMeshProUGUI turnText;
 
 
     public void Awake()
@@ -154,6 +155,7 @@ public class KASSEBSceneCanvas : SceneCanvas
 
         SetHandCardAction();
 
+        turnText.text="Žc‚è"+BattleManager.instance.GetRemainingTurn().ToString()+"ƒ^[ƒ“";
 
     }
 
@@ -165,6 +167,7 @@ public class KASSEBSceneCanvas : SceneCanvas
             Cards[i].onClick.AddListener(()=>
             {
                 BattleManager.instance.SetCardAction(cash);
+
 
                 Reroll();
 
