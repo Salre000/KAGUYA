@@ -32,6 +32,10 @@ public class BattleManager : MonoBehaviour
     private int turn = 0;
     private int kassenMaxTurn = 12;
 
+    private int turnInAction = 1;
+
+    private readonly int BASE_TURN_IN_ACTION = 1;
+
 
     [SerializeField] SpriteScriptableObject battleImages;
     public void Awake()
@@ -46,9 +50,10 @@ public class BattleManager : MonoBehaviour
 
         battleCardTextData = TextLoad.Load("BattleCard");
 
-        SetBattleCard(5);
-        SetBattleCard(1);
-        SetBattleCard(10);
+        for(int i = 1; i < 11; i++) 
+        {
+            SetBattleCard(i);
+        }
 
     }
 
@@ -76,11 +81,48 @@ public class BattleManager : MonoBehaviour
     }
     public int GetTurn() { return turn; }
     public int GetRemainingTurn() { return kassenMaxTurn-turn; }
-    public void AddTurn() {  turn++; }
+    public void NestTurn() 
+    {
+        turnInAction--;
+
+        if (turnInAction > 0) return;
+
+        turnInAction = BASE_TURN_IN_ACTION;
+
+        turn++;
+
+        if (turn < kassenMaxTurn) return;
+
+        SceneManager.instance.SceneEnd();
+
+
+    }
+    public Sprite GetCardImage(int ID)
+    {
+        return battleImages.sprites[ID];
+
+    }
+
+    public int GetHandIndex(int ID)
+    {
+        return handCards[ID];
+
+    }
+
+    public BattleCard GetCard(int ID)
+    {
+        return battleCards[ID];
+
+    }
 
     public void SetSetBattlePower(System.Action<int, int> action) 
     {
         SetBattlePower=action;
+    }
+
+    public void BattleStart() 
+    {
+        turn = 0;
     }
 
     public void Attack(int value) 
@@ -105,21 +147,20 @@ public class BattleManager : MonoBehaviour
         Debug.Log("UŒ‚—Í"+value);
     }
 
-    public void SetCardAction(int index) 
+    public void SetCardAction(int index,System.Action Reroll) 
     {
 
         index = handCards[index];
 
         // Hp‚ÌÁ”ï‚ª‰Â”\‚©‚Ç‚¤‚©‚ð”»’f
-        if (battleCards[index].cost > StatusManager.instance.GetStatus().HP) return;
+        if (battleCards[index].cost > StatusManager.instance.GetStatus().HP+ StatusManager.instance.GetStatus().LEEWAY_HP) return;
 
-        BattleManager.instance.AddTurn();
 
 
         StatusManager.instance.StatusInterference(status =>
         {
 
-            status.HP -= battleCards[index].cost;
+            Cost (battleCards[index].cost);
 
             StatusManager.instance.SetStatus(status);
 
@@ -129,14 +170,83 @@ public class BattleManager : MonoBehaviour
         Attack(battleCards[index].attack);
 
 
+        battleCards[index].cardStatus = cardStatus.trash;
+
         for (int i=0;i< battleCards[index].extra.Count; i++)  
         {
             battleCards[index].extra[i]();
         }
 
+        BattleManager.instance.NestTurn();
+
+        Reroll();
+
+    }
+    public void SetHand(int count=1) 
+    {
+        List<int> indexs=new List<int>();
+
+        if (battleCards.GetCount(status => { return status.cardStatus == cardStatus.deck; }) < count)
+            battleCards.GetAction(status => 
+            {
+                if(status.cardStatus== cardStatus.trash)
+                    status.cardStatus= cardStatus.deck;
+                return status;
+            });
+
+
+
+        for (int i = 0; i < battleCards.Count; i++) 
+        {
+            if (battleCards[i].cardStatus != cardStatus.deck) continue;
+            indexs.Add(i);
+        }
+
+        for(int i = 0; i < count; i++) 
+        {
+            int random= UnityEngine.Random.Range(0, indexs.Count);
+
+
+
+            handCards.Add(indexs[random]);
+
+            battleCards[handCards[handCards.Count - 1]].cardStatus = cardStatus.hand;
+
+            indexs.RemoveAt(random);
+        }
 
     }
 
+    public void ResetHand() 
+    {
+        handCards.Clear();
+    }
+    public void HandTrash() 
+    {
+
+        battleCards.GetAction(card =>
+        {
+            if (card.cardStatus == cardStatus.hand)
+                card.cardStatus = cardStatus.trash;
+            return card;
+        });
+
+
+    }
+
+    public void Heel(int value) 
+    {
+        Status status = StatusManager.instance.GetStatus();
+
+        status.HP += value;
+        
+        if(status.HP>status.MAX_HP) status.HP=status.MAX_HP;
+
+        StatusManager.instance.SetStatus(status);
+
+
+
+    }
 
     /// <summary>
     /// ID‚ðŠî‚ÉBattleCard‚Ìˆê•”‚ð–„‚ß‚é
@@ -164,12 +274,41 @@ public class BattleManager : MonoBehaviour
         battleCards[index].attack = int.Parse(battleCardTextData[battleCards[index].id][CARD_ATTACK_RATE]);
         battleCards[index].attack += int.Parse(battleCardTextData[battleCards[index].id][CARD_ATTACK_ENHANCED_RATE]);
 
-        //—v‚ç‚È‚¢‚©‚à
-        //battleCards[index].extra.Clear();
 
         SetExtra(index, battleCardTextData[battleCards[index].id][CARD_EXTRA_RATE]);
         SetExtra(index, battleCardTextData[battleCards[index].id][CARD_EXTRA_ENHANCED_RATE]);
     }
+
+    private void Cost(int cost) 
+    {
+        Status status = StatusManager.instance.GetStatus();
+
+        if (status.LEEWAY_HP < 0) 
+        { 
+            status.HP -= cost;
+        }
+        else 
+        {
+            if(cost> status.LEEWAY_HP) 
+            {
+                status.HP -= cost- status.LEEWAY_HP;
+                status.LEEWAY_HP = 0;
+
+            }
+            else 
+            {
+                status.LEEWAY_HP-= cost;
+            }
+
+
+
+        }
+
+            StatusManager.instance.SetStatus(status);
+
+    }
+
+
 
     private void SetExtra(int index, string extraText)
     {
@@ -391,7 +530,19 @@ public class BattleManager : MonoBehaviour
 
 
 
-    class BattleCard
+
+
+    public enum cardStatus 
+    {
+        deck,
+        hand,
+        trash,
+        exclusion,
+
+
+    }
+
+    public class BattleCard
     {
         public int id = 0;
         public int cost = 0;
@@ -399,6 +550,7 @@ public class BattleManager : MonoBehaviour
         public int level = 0;
         public string name = string.Empty;
         public List<System.Action> extra = new List<System.Action>();
+        public cardStatus cardStatus = cardStatus.deck;
 
     }
 

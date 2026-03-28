@@ -33,6 +33,11 @@ public class KASSEBSceneCanvas : SceneCanvas
 
     [SerializeField] private TextMeshProUGUI turnText;
 
+    private int selectIndex = -1;
+
+    [SerializeField] Button heel;
+
+    private readonly int heelValue = 2;
 
     public void Awake()
     {
@@ -43,6 +48,16 @@ public class KASSEBSceneCanvas : SceneCanvas
     {
         // 内部数値を見た目に反映する関数
         BattleManager.instance.SetSetBattlePower(SetGoalValues);
+
+        heel.onClick.AddListener(() =>
+        {
+            BattleManager.instance.Heel(2);
+
+            BattleManager.instance.NestTurn();
+
+            Reroll();
+
+        });
 
     }
 
@@ -57,12 +72,15 @@ public class KASSEBSceneCanvas : SceneCanvas
     {
         base.SceneStart();
         gameObject.SetActive(true);
+        BattleManager.instance.BattleStart();
 
         Reroll();
 
 
 
     }
+
+
 
     public override void SceneEnd()
     {
@@ -77,7 +95,7 @@ public class KASSEBSceneCanvas : SceneCanvas
         bool changeFlag = false;
 
         if (GoalValueText > nowValueText) { nowValueText++; changeFlag = true; }
-        if (GoalEnemiValueText > nowEnemiValueText){nowEnemiValueText++; changeFlag = true;}
+        if (GoalEnemiValueText > nowEnemiValueText) { nowEnemiValueText++; changeFlag = true; }
 
         if (GoalValue > nowValue) { nowValue += 1f; changeFlag = true; }
         if (GoalValue < nowValue) { nowValue -= 1f; changeFlag = true; }
@@ -145,35 +163,88 @@ public class KASSEBSceneCanvas : SceneCanvas
 
     }
 
-    private void Reroll() 
+    private void Reroll()
     {
+        
+        BattleManager.instance.HandTrash();
+        BattleManager.instance.ResetHand();
+        CardPositionReset();
 
         for (int i = 0; i < Cards.Count; i++)
         {
+            BattleManager.instance.SetHand();
             Cards[i].onClick.RemoveAllListeners();
+
+            SetCardImage(i);
+
         }
 
         SetHandCardAction();
 
-        turnText.text="残り"+BattleManager.instance.GetRemainingTurn().ToString()+"ターン";
+        turnText.text = "残り" + BattleManager.instance.GetRemainingTurn().ToString() + "ターン";
 
     }
 
-    private void SetHandCardAction() 
+    private void SetHandCardAction()
     {
-        for(int i=0; i < Cards.Count; i++) 
+        for (int i = 0; i < Cards.Count; i++)
         {
             int cash = i;
-            Cards[i].onClick.AddListener(()=>
+            Cards[i].onClick.AddListener(() =>
             {
-                BattleManager.instance.SetCardAction(cash);
+
+                if (selectIndex != cash)
+                {
+                    selectIndex = cash;
+                    CardPositionReset();
+                    Vector3 pos = Cards[cash].transform.localPosition;
+                    pos.y = 60;
+                    Cards[cash].transform.localPosition = pos;
+                    return;
+                }
 
 
-                Reroll();
+                selectIndex = -1;
+
+                BattleManager.instance.SetCardAction(cash, Reroll);
+
+                
 
             });
+
+            SetCardImage(i);
         }
 
+
+    }
+
+    private void CardPositionReset()
+    {
+        for (int i = 0; i < Cards.Count; i++)
+        {
+            Vector3 pos = Cards[i].transform.localPosition;
+
+            pos.y = 0;
+
+            Cards[i].transform.localPosition = pos;
+
+        }
+    }
+
+
+    private void SetCardImage(int index)
+    {
+
+        Image image = Cards[index].transform.GetChild(0).GetComponent<Image>();
+        TextMeshProUGUI name = Cards[index].transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI cost = Cards[index].transform.GetChild(4).GetComponent<TextMeshProUGUI>();
+
+        image.sprite = BattleManager.instance.GetCardImage(BattleManager.instance.GetHandIndex(index));
+
+
+        name.text = BattleManager.instance.GetCard(BattleManager.instance.GetHandIndex(index)).name;
+
+        cost.text = BattleManager.instance.GetCard(BattleManager.instance.GetHandIndex(index)).cost.ToString();
 
     }
 

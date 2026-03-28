@@ -3457,7 +3457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06d0fd9cac8c9d842896229f346ba539, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleImages: {fileID: 0}
+  battleImages: {fileID: 11400000, guid: 472be110883e96e409cf6d48a485b68c, type: 2}
 --- !u!1 &1852348166
 GameObject:
   m_ObjectHideFlags: 0
@@ -4210,8 +4210,8 @@ MonoBehaviour:
   - {fileID: 2689255946411981157, guid: ca39bc620743ae04cb46e4a740c517bd, type: 3}
   - {fileID: 2689255946411981157, guid: ca39bc620743ae04cb46e4a740c517bd, type: 3}
   - {fileID: 2689255946411981157, guid: ca39bc620743ae04cb46e4a740c517bd, type: 3}
-  - {fileID: 2689255946411981157, guid: ca39bc620743ae04cb46e4a740c517bd, type: 3}
   - {fileID: 2927545616381609366, guid: ffd55f9f91e93e64188f85ca7eac9719, type: 3}
+  - {fileID: 2689255946411981157, guid: ca39bc620743ae04cb46e4a740c517bd, type: 3}
   - {fileID: 2689255946411981157, guid: ca39bc620743ae04cb46e4a740c517bd, type: 3}
   - {fileID: 2689255946411981157, guid: ca39bc620743ae04cb46e4a740c517bd, type: 3}
   - {fileID: 7521901065741040426, guid: 6ca472a818e252c4c84eec70a2d2e1c2, type: 3}

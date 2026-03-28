@@ -34,12 +34,14 @@ public class KassenScene : SceneBase
     }
     public override void End()
     {
-        base.End();
+        PlotManager.instance.AddPlotCount();
 
+        CatinManager.instance.StartNormalCutin(() =>
+        {
+            PlotManager.instance.StartPlotScene();
+            SceneCanvasManager.instance.SceneEnd();
 
-
-
-
+        });
     }
 
 
